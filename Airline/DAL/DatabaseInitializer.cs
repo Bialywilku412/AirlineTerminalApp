@@ -15,16 +15,6 @@ public class DatabaseInitializer
         using var connection = new SqliteConnection(_connectionString);
         connection.Open();
 
-        using var flightsCommand = connection.CreateCommand();
-        flightsCommand.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Flights (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Origin TEXT NOT NULL,
-                Destination TEXT NOT NULL,
-                FOREIGN KEY (PlaneId) REFERENCES Planes(ID),
-            );";
-        flightsCommand.ExecuteNonQuery();
-
         using var usersCommand = connection.CreateCommand();
         usersCommand.CommandText = @"
             CREATE TABLE IF NOT EXISTS Users (
@@ -44,6 +34,17 @@ public class DatabaseInitializer
             );";
         planeCommand.ExecuteNonQuery();
 
+        using var flightsCommand = connection.CreateCommand();
+        flightsCommand.CommandText = @"
+            CREATE TABLE IF NOT EXISTS Flights (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Origin TEXT NOT NULL,
+                Destination TEXT NOT NULL,
+                PlaneId INTEGER NOT NULL,
+                FOREIGN KEY (PlaneId) REFERENCES Planes(Id)
+            );";
+        flightsCommand.ExecuteNonQuery();
+
         using var seatCommand = connection.CreateCommand();
         seatCommand.CommandText = @"
             CREATE TABLE IF NOT EXISTS Seats (
@@ -52,7 +53,7 @@ public class DatabaseInitializer
                 Row TEXT NOT NULL,
                 Column INTEGER NOT NULL,
                 Class TEXT NOT NULL,
-                FOREIGN KEY (PlaneId) REFERENCES Planes(ID),
+                FOREIGN KEY (PlaneId) REFERENCES Planes(Id),
                 UNIQUE (PlaneId, Row, Column)
             );";
         seatCommand.ExecuteNonQuery();

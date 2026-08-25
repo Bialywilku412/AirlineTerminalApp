@@ -3,9 +3,9 @@
 public static class AdminMenu
 {
     private static readonly PlaneRepository planeRepository = new PlaneRepository();
-    private static readonly PlaneService planeService = new PlaneService(planeRepository);
+    private static readonly PlaneService _planeService = new PlaneService(planeRepository);
     private static readonly FlightRepository _repository = new FlightRepository();
-    private static readonly FlightService _service = new FlightService(_repository, planeService);
+    private static readonly FlightService _service = new FlightService(_repository, _planeService);
 
     public static void Menu()
     {
@@ -30,6 +30,22 @@ public static class AdminMenu
 
     private static void AddFlight()
     {
+        List<Plane> Planes = _planeService.ShowAllPlanes().Data;
+
+        var table = new Table();
+
+        table.AddColumn("PlaneId");
+        table.AddColumn("Model");
+        table.AddColumn("Capacity");
+
+        foreach (Plane plane in Planes)
+        {
+            table.AddRow(plane.ID.ToString(), plane.Model, plane.Capacity.ToString());
+        }
+
+        AnsiConsole.Write(table);
+        var planeInput = AnsiConsole.Ask<int>("Plane ID: ");
+
         // From Airport
         Console.WriteLine("From what airport");
         foreach(Airports airport in Enum.GetValues(typeof(Airports)))
@@ -62,7 +78,8 @@ public static class AdminMenu
         Flight flight = new Flight
         {
             Origin = origin,
-            Destination = destination
+            Destination = destination,
+            AssignedPlaneId = planeInput
         };
 
         var result = _service.AddFlight(flight);
