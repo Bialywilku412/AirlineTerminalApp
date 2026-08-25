@@ -2,8 +2,10 @@
 
 public static class AdminMenu
 {
+    private static readonly PlaneRepository planeRepository = new PlaneRepository();
+    private static readonly PlaneService planeService = new PlaneService(planeRepository);
     private static readonly FlightRepository _repository = new FlightRepository();
-    private static readonly FlightService _service = new FlightService(_repository);
+    private static readonly FlightService _service = new FlightService(_repository, planeService);
 
     public static void Menu()
     {

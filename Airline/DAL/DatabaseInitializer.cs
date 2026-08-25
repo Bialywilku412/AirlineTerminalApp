@@ -20,7 +20,8 @@ public class DatabaseInitializer
             CREATE TABLE IF NOT EXISTS Flights (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Origin TEXT NOT NULL,
-                Destination TEXT NOT NULL
+                Destination TEXT NOT NULL,
+                FOREIGN KEY (PlaneId) REFERENCES Planes(ID),
             );";
         flightsCommand.ExecuteNonQuery();
 

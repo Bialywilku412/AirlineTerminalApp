@@ -6,6 +6,8 @@
     public Airports Origin { get; set; }
 
     public Airports Destination { get; set; }
+    public int AssignedPlaneId { get; set; }
+    public Plane AssignedPlane { get; set; }
 
 
 }

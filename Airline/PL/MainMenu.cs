@@ -2,8 +2,10 @@
 
 public static class MainMenu
 {
+    private static readonly PlaneRepository planeRepository = new PlaneRepository();
+    private static readonly PlaneService planeService = new PlaneService(planeRepository);
     private static readonly FlightRepository _repository = new FlightRepository();
-    private static readonly FlightService _service = new FlightService(_repository);
+    private static readonly FlightService _service = new FlightService(_repository, planeService);
     public static void Menu(User user)
     {
         bool isRunning = true;
@@ -38,12 +40,13 @@ public static class MainMenu
         var table = new Table();
 
         table.AddColumn("Flight ID");
+        table.AddColumn("Plane");
         table.AddColumn("Origin");
         table.AddColumn("Destination");
 
         foreach (Flight flight in flights)
         {
-            table.AddRow(flight.ID.ToString(), flight.Origin.ToString(), flight.Destination.ToString());
+            table.AddRow(flight.ID.ToString(),flight.AssignedPlane.Model ,flight.Origin.ToString(), flight.Destination.ToString());
         }
 
         AnsiConsole.Write(table);

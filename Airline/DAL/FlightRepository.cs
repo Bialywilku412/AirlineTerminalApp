@@ -11,10 +11,11 @@ public class FlightRepository
 
         var command = connection.CreateCommand();
         command.CommandText = @"
-            INSERT INTO Flights (Origin, Destination)
-            VALUES ($origin, $destination);";
+            INSERT INTO Flights (Origin, Destination, PlaneId)
+            VALUES ($origin, $destination, $planeId);";
         command.Parameters.AddWithValue("$origin", flight.Origin.ToString());
         command.Parameters.AddWithValue("$destination", flight.Destination.ToString());
+        command.Parameters.AddWithValue("$planeId", flight.AssignedPlaneId);
         command.ExecuteNonQuery();
     }
 
@@ -26,7 +27,7 @@ public class FlightRepository
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = "SELECT Id, Origin, Destination FROM Flights;";
+        command.CommandText = "SELECT Id, Origin, Destination, PlaneId FROM Flights;";
 
         using var reader = command.ExecuteReader();
         while(reader.Read())
@@ -35,7 +36,8 @@ public class FlightRepository
             {
                 ID = reader.GetInt32(0),
                 Origin = Enum.Parse<Airports>(reader.GetString(1)),
-                Destination = Enum.Parse<Airports>(reader.GetString(2))
+                Destination = Enum.Parse<Airports>(reader.GetString(2)),
+                AssignedPlaneId = reader.GetInt32(3)
             };
             flights.Add(flight);
         }

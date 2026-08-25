@@ -15,4 +15,13 @@
 
         return new Result<List<Plane>>(true, "succes", planes);
     }
+
+    public Result<Plane> GetPlaneById (int id)
+    {
+        Plane plane = _repository.GetPlaneById(id);
+        if (plane == null)
+            return new Result<Plane>(false, "No airplane found");
+
+        return new Result<Plane>(true, "succes", plane);
+    }
 }
