@@ -58,6 +58,19 @@ public class DatabaseInitializer
             );";
         seatCommand.ExecuteNonQuery();
 
+        using var seatReservationCommand = connection.CreateCommand();
+        seatReservationCommand.CommandText = @"
+            CREATE TABLE IF NOT EXISTS SeatReservations (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                SeatId INTEGER NOT NULL,
+                FlightId INTEGER NOT NULL,
+                UserId INTEGER NOT NULL,
+                Price FLOAT NOT NULL,
+                FOREIGN KEY (SeatId) REFERENCES Seats(Id),
+                FOREIGN KEY (FlightId) REFERENCES Flights(Id),
+                FOREIGN KEY (UserId) REFERENCES Users(Id),
+            );";
+
     }
     
     public void AddPlane(string model, int capacity)
