@@ -51,4 +51,12 @@ public static class MainMenu
 
         AnsiConsole.Write(table);
     }
+
+    public static void BookFlight()
+    {
+        FlightsOverview();
+        var flightId = AnsiConsole.Ask<int>("For what flight you want to book a ticket?");
+
+
+    }
 }
