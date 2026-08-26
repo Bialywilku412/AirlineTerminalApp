@@ -37,4 +37,13 @@
 
         return new Result<List<Flight>>(true, "succes", flights);
     }
+
+    public Result<Flight> GetFlightById(int id)
+    {
+        Flight flight = _repository.GetFlightById(id);
+        if (flight == null)
+            return new Result<Flight>(false, "No flight found");
+
+        return new Result<Flight>(true, "succes", flight);
+    }
 }
