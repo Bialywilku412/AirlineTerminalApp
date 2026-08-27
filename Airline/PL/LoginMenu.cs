@@ -2,9 +2,14 @@
 
 public static class LoginMenu
 {
-    private static readonly UserRepository _repository = new UserRepository();
-    private static readonly UserService _service = new UserService(_repository);
-    public static void ShowLoginMenu()
+    public static void ShowLoginMenu
+    (
+        PlaneService planeService,
+        UserService userService,
+        FlightService flightService,
+        SeatService seatService,
+        SeatReservationService seatReservationService
+    )
     {
         bool isRunning = true;
         AnsiConsole.MarkupLine("[green]Welcome at Airport Rotterdam[/].");
@@ -17,26 +22,33 @@ public static class LoginMenu
                     .AddChoices("Login", "Register", "Exit"));
 
             if (choice == "Register")
-                Register();
+                Register(userService);
             else if (choice == "Login")
-                Login();
+                Login(planeService, userService, flightService, seatService, seatReservationService);
             else
                 isRunning = false;
         }
     }
 
-    private static void Login()
+    private static void Login
+    (
+        PlaneService planeService,
+        UserService userService,
+        FlightService flightService,
+        SeatService seatService,
+        SeatReservationService seatReservationService
+    )
     {
         Console.Clear();
         var login = AnsiConsole.Ask<string>("Username: ");
         var password = AnsiConsole.Ask<string>("Password: ");
-        var logged = _service.LogingIn(login, password);
-        var user = _service.GetUserByLogin(login).Data;
+        var logged = userService.LogingIn(login, password);
+        var user = userService.GetUserByLogin(login).Data;
 
         if (logged.Success)
         {
             Console.Clear();
-            MainMenu.Menu(user);
+            MainMenu.Menu(user, planeService, userService, flightService, seatService, seatReservationService);
         }
         else
         {
@@ -44,7 +56,7 @@ public static class LoginMenu
         }
     }
 
-    private static void Register()
+    private static void Register(UserService userService)
     {
         var login = AnsiConsole.Ask<string>("Username: ");
         var password = AnsiConsole.Ask<string>("Password: ");
@@ -55,7 +67,7 @@ public static class LoginMenu
             Password = password
         };
 
-        var result = _service.RegisterUser(newUser);
+        var result = userService.RegisterUser(newUser);
         Console.WriteLine(result.Message);
     }
 }

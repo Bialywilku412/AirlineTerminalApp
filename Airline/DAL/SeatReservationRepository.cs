@@ -30,12 +30,41 @@ public class SeatReservationRepository
         var command = connection.CreateCommand();
         command.CommandText = @"
             SELECT * FROM SeatReservations
-            WHERE id = FlightId
+            WHERE FlightId = @FlightId
         ";
+        command.Parameters.AddWithValue("@FlightId", id);
 
         List<SeatReservation> reservations = new();
         using var reader = command.ExecuteReader();
         while(reader.Read())
+        {
+            SeatReservation reservation = new SeatReservation
+            {
+                Id = reader.GetInt32(0),
+                SeatId = reader.GetInt32(1),
+                FlightId = reader.GetInt32(2),
+                Price = reader.GetFloat(3)
+            };
+            reservations.Add(reservation);
+        }
+        return reservations;
+    }
+
+    public List<SeatReservation> GetSeatReservationsByUserId(int id)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+
+        var command = connection.CreateCommand();
+        command.CommandText = @"
+            SELECT * FROM SeatReservations
+            WHERE UserId = @UserId
+        ";
+        command.Parameters.AddWithValue("@UserId", id);
+
+        List<SeatReservation> reservations = new();
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
         {
             SeatReservation reservation = new SeatReservation
             {
