@@ -50,8 +50,8 @@ public class DatabaseInitializer
             CREATE TABLE IF NOT EXISTS Seats (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 PlaneId INTEGER NOT NULL,
-                Row TEXT NOT NULL,
-                Column INTEGER NOT NULL,
+                Row INTEGER NOT NULL,
+                Column TEXT NOT NULL,
                 Class TEXT NOT NULL,
                 FOREIGN KEY (PlaneId) REFERENCES Planes(Id),
                 UNIQUE (PlaneId, Row, Column)
@@ -68,8 +68,9 @@ public class DatabaseInitializer
                 Price FLOAT NOT NULL,
                 FOREIGN KEY (SeatId) REFERENCES Seats(Id),
                 FOREIGN KEY (FlightId) REFERENCES Flights(Id),
-                FOREIGN KEY (UserId) REFERENCES Users(Id),
+                FOREIGN KEY (UserId) REFERENCES Users(Id)
             );";
+        seatReservationCommand.ExecuteNonQuery();
 
     }
     
@@ -94,24 +95,24 @@ public class DatabaseInitializer
         using var connection = new SqliteConnection(_connectionString);
         connection.Open();
 
-        string[] rows = { "A", "B", "C", "D", "E", "F" };
+        string[] columns = { "A", "B", "C", "D", "E", "F" };
 
-        foreach (string row in rows)
+        foreach (string column in columns)
         {
-            for (int column = 1; column <= 33; column++)
+            for (int row = 1; row <= 33; row++)
             {
                 string seatClass =
-                    (column == 16 || column == 17)
+                    (row == 16 || row == 17)
                     ? "Preferred"
                     : "Standard";
 
                 using var command = connection.CreateCommand();
 
                 command.CommandText = @"
-                    INSERT OR IGNORE INTO Seats
-                        (PlaneId, Row, Column, Class)
-                    VALUES
-                        ($planeId, $row, $column, $class);";
+                INSERT OR IGNORE INTO Seats
+                    (PlaneId, Row, Column, Class)
+                VALUES
+                    ($planeId, $row, $column, $class);";
 
                 command.Parameters.AddWithValue("$planeId", planeId);
                 command.Parameters.AddWithValue("$row", row);
