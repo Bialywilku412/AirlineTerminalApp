@@ -69,4 +69,20 @@ public class FlightRepository
 
         return flights;
     }
+
+    public void DeleteFlightById(int id)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+
+        using var pragmaCommand = connection.CreateCommand();
+        pragmaCommand.CommandText = "PRAGMA foreign_keys = ON;";
+        pragmaCommand.ExecuteNonQuery();
+
+        var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM Flights WHERE Id = $Id";
+        command.Parameters.AddWithValue("$Id", id);
+
+        command.ExecuteNonQuery();
+    }
 }

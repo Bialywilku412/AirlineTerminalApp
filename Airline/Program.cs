@@ -11,7 +11,7 @@ SeatRepository _seatRepository = new SeatRepository();
 SeatService _seatService = new SeatService(_seatRepository);
 
 SeatReservationRepository _seatReservationRepository = new SeatReservationRepository();
-SeatReservationService _seatReservationService = new SeatReservationService(_seatReservationRepository);
+SeatReservationService _seatReservationService = new SeatReservationService(_seatReservationRepository, _flightService, _seatService, _planeService);
 
 new DatabaseInitializer().Initialize();
 if(_planeService.ShowAllPlanes().Success == false)

@@ -27,8 +27,6 @@
     public Result<List<Flight>> ShowAllFlights()
     {
         var flights = _repository.ShowAllFlights();
-        if (flights.Count == 0)
-            return new Result<List<Flight>>(false, "No flights");
 
         foreach (var flight in flights)
         {
@@ -44,6 +42,18 @@
         if (flight == null)
             return new Result<Flight>(false, "No flight found");
 
+        flight.AssignedPlane = _planeService.GetPlaneById(flight.AssignedPlaneId).Data;
+
         return new Result<Flight>(true, "succes", flight);
+    }
+
+    public Result<bool> DeleteFlightById(int id)
+    {
+        Flight flight = _repository.GetFlightById(id);
+        if (flight == null)
+            return new Result<bool>(false, "This flight does not exist");
+
+        _repository.DeleteFlightById(id);
+        return new Result<bool>(true, "succes", true);
     }
 }

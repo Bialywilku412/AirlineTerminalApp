@@ -12,7 +12,7 @@ public static class AdminMenu
         var choice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Select an [green]environment[/]:")
-                .AddChoices("Flights", "Add Flight", "Return"));
+                .AddChoices("Flights", "Add Flight", "Cancel Flight", "Return"));
 
         switch(choice)
         {
@@ -21,6 +21,9 @@ public static class AdminMenu
                 break;
             case "Add Flight":
                 AddFlight();
+                break;
+            case "Cancel Flight":
+                CancelFlight();
                 break;
             case "Return":
                 return;
@@ -84,5 +87,39 @@ public static class AdminMenu
 
         var result = _service.AddFlight(flight);
         Console.WriteLine(result.Message);
+    }
+
+    private static void CancelFlight()
+    {
+        MainMenu.FlightsOverview();
+
+        var flightId = AnsiConsole.Ask<int>("Enter flight id that you want to cancel: ");
+
+        Result<Flight> result = _service.GetFlightById(flightId);
+        if (!result.Success)
+        {
+            Console.WriteLine(result.Message);
+            return;
+        }
+
+        Flight flight = result.Data;
+
+        var table = new Table();
+
+        table.AddColumn("Flight ID");
+        table.AddColumn("Plane");
+        table.AddColumn("Origin");
+        table.AddColumn("Destination");
+
+        table.AddRow(flight.ID.ToString(), flight.AssignedPlane.Model, flight.Origin.ToString(), flight.Destination.ToString());
+
+        AnsiConsole.Write(table);
+
+        if(AnsiConsole.Confirm("Are you sure you want to cancel this flight?"))
+        {
+            _service.DeleteFlightById(flightId);
+        }
+
+
     }
 }

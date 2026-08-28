@@ -67,7 +67,7 @@ public class DatabaseInitializer
                 UserId INTEGER NOT NULL,
                 Price FLOAT NOT NULL,
                 FOREIGN KEY (SeatId) REFERENCES Seats(Id),
-                FOREIGN KEY (FlightId) REFERENCES Flights(Id),
+                FOREIGN KEY (FlightId) REFERENCES Flights(Id) ON DELETE CASCADE,
                 FOREIGN KEY (UserId) REFERENCES Users(Id)
             );";
         seatReservationCommand.ExecuteNonQuery();
