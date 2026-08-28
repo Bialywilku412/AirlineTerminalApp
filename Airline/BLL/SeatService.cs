@@ -16,4 +16,12 @@
         return new Result<List<Seat>>(true, "succes", seats);
     }
 
+    public Result<Seat> GetSeatById(int id)
+    {
+        Seat seat = _repository.GetSeatById(id);
+        if (seat == null)
+            return new Result<Seat>(false, "No seat found");
+
+        return new Result<Seat>(true, "succes", seat);
+    }
 }

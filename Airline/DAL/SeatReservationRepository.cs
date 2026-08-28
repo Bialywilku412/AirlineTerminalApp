@@ -71,7 +71,8 @@ public class SeatReservationRepository
                 Id = reader.GetInt32(0),
                 SeatId = reader.GetInt32(1),
                 FlightId = reader.GetInt32(2),
-                Price = reader.GetFloat(3)
+                UserId = reader.GetInt32(3),
+                Price = reader.GetFloat(4)
             };
             reservations.Add(reservation);
         }

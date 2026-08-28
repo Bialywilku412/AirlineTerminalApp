@@ -44,7 +44,7 @@ public static class MainMenu
                     BookFlight(user);
                     break;
                 case "Reservations":
-                    ReservationsOverview();
+                    ReservationsOverview(user);
                     break;
                 case "Admin Menu":
                     AdminMenu.Menu();
@@ -109,8 +109,35 @@ public static class MainMenu
         SeatReservation reserved = _seatReservationService.AddReservation(seatReservation).Data;
     }
 
-    public static void ReservationsOverview()
+    public static void ReservationsOverview(User user)
     {
+        List<SeatReservation> seatReservations = _seatReservationService.GetSeatReservationsByUserId(user.Id).Data;
 
+        var table = new Table();
+
+        table.AddColumn("Reservation ID");
+        table.AddColumn("Plane");
+        table.AddColumn("Origin");
+        table.AddColumn("Destination");
+        table.AddColumn("Seat row");
+        table.AddColumn("Seat column");
+        table.AddColumn("Seat class");
+
+        foreach (SeatReservation reservation in seatReservations)
+        {
+
+            table.AddRow
+            (
+                reservation.Id.ToString(),
+                reservation.Flight.AssignedPlane.Model,
+                reservation.Flight.Origin.ToString(),
+                reservation.Flight.Destination.ToString(),
+                reservation.Seat.Row.ToString(),
+                reservation.Seat.Column.ToString(),
+                reservation.Seat.Class.ToString()
+            );
+        }
+
+        AnsiConsole.Write(table);
     }
 }

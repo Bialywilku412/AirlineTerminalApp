@@ -3,12 +3,14 @@
     private readonly SeatReservationRepository _repository;
     private readonly FlightService _flightService;
     private readonly SeatService _seatService;
+    private readonly PlaneService _planeService;
 
-    public SeatReservationService(SeatReservationRepository repository, FlightService flightService, SeatService seatService)
+    public SeatReservationService(SeatReservationRepository repository, FlightService flightService, SeatService seatService, PlaneService planeService)
     {
         _repository = repository;
         _flightService = flightService;
         _seatService = seatService;
+        _planeService = planeService;
     }
 
     public Result<SeatReservation> AddReservation(SeatReservation seatReservation)
@@ -20,21 +22,18 @@
     public Result<List<SeatReservation>> GetSeatReservationsByFlightId(int id)
     {
         List<SeatReservation> seatReservations = _repository.GetSeatReservationsByFlightId(id);
-        if (seatReservations.Count == 0)
-            return new Result<List<SeatReservation>>(false, "No reservations found");
-
         return new Result<List<SeatReservation>>(true, "succes", seatReservations);
     }
 
     public Result<List<SeatReservation>> GetSeatReservationsByUserId(int id)
     {
         List<SeatReservation> seatReservations = _repository.GetSeatReservationsByUserId(id);
-        if (seatReservations.Count == 0)
-            return new Result<List<SeatReservation>>(false, "No reservations found");
 
         foreach(var reservation in seatReservations)
         {
-            reservation.Seat = _seatService.Ge
+            reservation.Seat = _seatService.GetSeatById(reservation.SeatId).Data;
+            reservation.Flight = _flightService.GetFlightById(reservation.FlightId).Data;
+            reservation.Flight.AssignedPlane = _planeService.GetPlaneById(reservation.FlightId).Data;
         }
 
         return new Result<List<SeatReservation>>(true, "succes", seatReservations);

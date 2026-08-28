@@ -10,7 +10,8 @@ public class SeatRepository
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Seats WHERE id = Id;";
+        command.CommandText = "SELECT * FROM Seats WHERE Id = @Id;";
+        command.Parameters.AddWithValue("@Id", id);
 
         using var reader = command.ExecuteReader();
 
