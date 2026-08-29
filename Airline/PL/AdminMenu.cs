@@ -6,13 +6,15 @@ public static class AdminMenu
     private static readonly PlaneService _planeService = new PlaneService(planeRepository);
     private static readonly FlightRepository _repository = new FlightRepository();
     private static readonly FlightService _service = new FlightService(_repository, _planeService);
+    private static readonly UserRepository userRepository = new UserRepository();
+    private static readonly UserService _userService = new UserService(userRepository);
 
     public static void Menu()
     {
         var choice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Select an [green]environment[/]:")
-                .AddChoices("Flights", "Add Flight", "Cancel Flight", "Return"));
+                .AddChoices("Flights", "Add Flight", "Cancel Flight", "Users Menu", "Return"));
 
         switch(choice)
         {
@@ -24,6 +26,9 @@ public static class AdminMenu
                 break;
             case "Cancel Flight":
                 CancelFlight();
+                break;
+            case "Users Menu":
+                UserManipulationMenu.Menu();
                 break;
             case "Return":
                 return;
@@ -119,7 +124,5 @@ public static class AdminMenu
         {
             _service.DeleteFlightById(flightId);
         }
-
-
     }
 }
