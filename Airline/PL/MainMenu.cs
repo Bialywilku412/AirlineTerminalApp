@@ -33,7 +33,7 @@ public static class MainMenu
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Select")
-                    .AddChoices("Flights", "Book Flight", "Reservations", "Admin Menu"));
+                    .AddChoices("Flights", "Book Flight", "Reservations", "Cancel Reservation", "Admin Menu"));
 
             switch (choice)
             {
@@ -45,6 +45,9 @@ public static class MainMenu
                     break;
                 case "Reservations":
                     ReservationsOverview(user);
+                    break;
+                case "Cancel Reservation":
+                    CancelReservation(user);
                     break;
                 case "Admin Menu":
                     AdminMenu.Menu();
@@ -107,6 +110,19 @@ public static class MainMenu
         };
 
         SeatReservation reserved = _seatReservationService.AddReservation(seatReservation).Data;
+    }
+
+    public static void CancelReservation(User user)
+    {
+        ReservationsOverview(user);
+
+        var reservationId = AnsiConsole.Ask<int>("What reservation do you want to cancel?");
+        SeatReservation reservation = _seatReservationService.GetSeatReservationById(reservationId).Data;
+
+        if (AnsiConsole.Confirm("Are you sure you want to cancel this flight?"))
+        {
+            _seatReservationService.DeleteReservationByUser(reservation);
+        }
     }
 
     public static void ReservationsOverview(User user)
