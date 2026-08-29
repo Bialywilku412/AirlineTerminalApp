@@ -22,6 +22,45 @@ public class SeatReservationRepository
         command.ExecuteNonQuery();
     }
 
+    public SeatReservation GetReservationById(int id)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+
+        var command = connection.CreateCommand();
+        command.CommandText = @"
+            SELECT * FROM SeatReservations
+            WHERE Id = @Id
+        ";
+        command.Parameters.AddWithValue("@Id", id);
+
+        SeatReservation reservation = new();
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            reservation = new SeatReservation
+            {
+                Id = reader.GetInt32(0),
+                SeatId = reader.GetInt32(1),
+                FlightId = reader.GetInt32(2),
+                Price = reader.GetFloat(3)
+            };
+        }
+        return reservation;
+    }
+
+    public void DeleteReservationByUser(SeatReservation seatReservation)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+
+        var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM SeatReservations WHERE Id = $Id";
+
+        command.Parameters.AddWithValue("$Id", seatReservation.Id);
+        command.ExecuteNonQuery();
+    }
+
     public List<SeatReservation> GetSeatReservationsByFlightId(int id)
     {
         using var connection = new SqliteConnection(_connectionString);
