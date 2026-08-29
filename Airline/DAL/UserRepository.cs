@@ -43,5 +43,31 @@ public class UserRepository
         return users;
     }
 
+    public User GetUserById(int id)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM Users WHERE Id = $Id";
+        command.Parameters.AddWithValue("$Id", id);
+
+        using var reader = command.ExecuteReader();
+        User user = null;
+        while (reader.Read())
+        {
+            user = new User
+            {
+                Id = reader.GetInt32(0),
+                Login = reader.GetString(1),
+                Password = reader.GetString(2),
+                Rank = reader.GetString(3)
+            };
+        }
+
+        return user;
+    }
+
+    //public void UpdateUserRole()
    
 }
