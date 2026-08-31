@@ -25,7 +25,8 @@ public class FlightRepository
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Flights WHERE id = Id;";
+        command.CommandText = "SELECT * FROM Flights WHERE Id = $Id;";
+        command.Parameters.AddWithValue("$Id", id);
 
         using var reader = command.ExecuteReader();
 

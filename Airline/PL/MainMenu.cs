@@ -32,7 +32,6 @@ public static class MainMenu
         {
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("Select")
                     .AddChoices("Flights", "Book Flight", "Reservations", "Cancel Reservation", "Admin Menu"));
 
             switch (choice)
@@ -56,7 +55,7 @@ public static class MainMenu
         }
     }
 
-    public static void FlightsOverview()
+    public static void FlightsTable()
     {
         List<Flight> flights = _flightService.ShowAllFlights().Data;
 
@@ -69,15 +68,21 @@ public static class MainMenu
 
         foreach (Flight flight in flights)
         {
-            table.AddRow(flight.ID.ToString(),flight.AssignedPlane.Model ,flight.Origin.ToString(), flight.Destination.ToString());
+            table.AddRow(flight.ID.ToString(), flight.AssignedPlane.Model, flight.Origin.ToString(), flight.Destination.ToString());
         }
 
         AnsiConsole.Write(table);
     }
+    public static void FlightsOverview()
+    {
+        Console.Clear();
+        FlightsTable();
+        Utility.Return();
+    }
 
     public static void BookFlight(User user)
     {
-        FlightsOverview();
+        FlightsTable();
         var flightId = AnsiConsole.Ask<int>("For what flight you want to book a ticket?");
         Flight flight = _flightService.GetFlightById(flightId).Data;
 
@@ -110,11 +115,13 @@ public static class MainMenu
         };
 
         SeatReservation reserved = _seatReservationService.AddReservation(seatReservation).Data;
+        Console.Clear();
+        ReservationsOverview(user);
     }
 
     public static void CancelReservation(User user)
     {
-        ReservationsOverview(user);
+        ReservationsTable(user);
 
         var reservationId = AnsiConsole.Ask<int>("What reservation do you want to cancel?");
         SeatReservation reservation = _seatReservationService.GetSeatReservationById(reservationId).Data;
@@ -123,9 +130,12 @@ public static class MainMenu
         {
             _seatReservationService.DeleteReservationByUser(reservation);
         }
+
+        Console.Clear();
+        ReservationsOverview(user);
     }
 
-    public static void ReservationsOverview(User user)
+    private static void ReservationsTable(User user)
     {
         List<SeatReservation> seatReservations = _seatReservationService.GetSeatReservationsByUserId(user.Id).Data;
 
@@ -155,5 +165,10 @@ public static class MainMenu
         }
 
         AnsiConsole.Write(table);
+    }
+    public static void ReservationsOverview(User user)
+    {
+        ReservationsTable(user);
+        Utility.Return();
     }
 }

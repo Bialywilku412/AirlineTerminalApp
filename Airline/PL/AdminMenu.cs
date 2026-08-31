@@ -96,9 +96,10 @@ public static class AdminMenu
 
     private static void CancelFlight()
     {
-        MainMenu.FlightsOverview();
+        MainMenu.FlightsTable();
 
         var flightId = AnsiConsole.Ask<int>("Enter flight id that you want to cancel: ");
+        Console.Clear();
 
         Result<Flight> result = _service.GetFlightById(flightId);
         if (!result.Success)
@@ -124,5 +125,7 @@ public static class AdminMenu
         {
             _service.DeleteFlightById(flightId);
         }
+
+        MainMenu.FlightsOverview();
     }
 }
